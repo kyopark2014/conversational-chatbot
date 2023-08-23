@@ -175,7 +175,7 @@ def get_summary(file_type, s3_file_name):
     
     prompt_template = """Write a concise summary of the following:
 
-    {text}
+    {text} 
         
     CONCISE SUMMARY """
 
