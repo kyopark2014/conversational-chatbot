@@ -150,17 +150,8 @@ def get_answer_using_template(query):
     Question: {input}
     Assistant:"""
     PROMPT = PromptTemplate(
-        template=prompt_template, input_variables=["history", "input"], template=prompt_template)
+        template=prompt_template, input_variables=["history", "input"])
 
-    from langchain import ConversationChain
-    conversation = ConversationChain(
-        llm=llm, 
-        prompt=PROMPT, 
-        verbose=True, 
-        memory=ConversationBufferMemory(ai_prefix="AI Assistant"),
-    )
-
-    #result = conversation.predict(input=query)
     #print('result: ', result)
     from langchain.chains import LLMChain
     chain = LLMChain(llm=llm, prompt=PROMPT)
@@ -168,6 +159,17 @@ def get_answer_using_template(query):
     result = chain.run({
         'history': [],
         'input': query})
+    
+
+    #from langchain import ConversationChain
+    #conversation = ConversationChain(
+    #    llm=llm, 
+    #    prompt=PROMPT, 
+    #    verbose=True, 
+    #    memory=ConversationBufferMemory(ai_prefix="AI Assistant"),
+    #)
+    #result = conversation.predict(input=query)
+
     
     return result
 
