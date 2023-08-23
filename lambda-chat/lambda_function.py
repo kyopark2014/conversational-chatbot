@@ -134,13 +134,23 @@ def get_answer_using_template(query):
     #    template=prompt_template, input_variables=["context", "question"]
     #    )
 
-    template = """The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know.
+    #template = """The following is a friendly conversation between a human and an AI. The AI is #talkative and provides lots of specific details from its context. If the AI does not know #the answer to a question, it truthfully says it does not know.
+
+    #Current conversation:
+    #{history}
+    #Human: {input}
+    #AI Assistant:"""
+    #PROMPT = PromptTemplate(input_variables=["history", "input"], template=template)
+
+    prompt_template = """Human: Use the following pieces of context to provide a concise answer to the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
 
     Current conversation:
     {history}
-    Human: {input}
-    AI Assistant:"""
-    PROMPT = PromptTemplate(input_variables=["history", "input"], template=template)
+
+    Question: {input}
+    Assistant:"""
+    PROMPT = PromptTemplate(
+        template=prompt_template, input_variables=["history", "input"], template=prompt_template)
 
     from langchain import ConversationChain
     conversation = ConversationChain(
@@ -150,8 +160,14 @@ def get_answer_using_template(query):
         memory=ConversationBufferMemory(ai_prefix="AI Assistant"),
     )
 
-    result = conversation.predict(input=query)
-    print('result: ', result)
+    #result = conversation.predict(input=query)
+    #print('result: ', result)
+    from langchain.chains import LLMChain
+    chain = LLMChain(llm=llm, prompt=PROMPT)
+
+    result = chain.run({
+        'history': [],
+        'input': query})
     
     return result
 
