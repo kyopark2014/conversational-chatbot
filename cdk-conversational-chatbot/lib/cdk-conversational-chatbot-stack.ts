@@ -19,8 +19,8 @@ const endpoint_url = "https://prod.us-west-2.frontend.bedrock.aws.dev";
 const model_id = "amazon.titan-tg1-large"; // amazon.titan-e1t-medium, anthropic.claude-v1
 const projectName = `conversational-chatbot-${region}`; 
 const bucketName = `storage-for-${projectName}`; 
-const accessType = "aws"; // aws or preview
-const bedrock_region = "us-west-2";  // "us-east-1" "us-west-2" 
+const accessType = "preview"; // aws or preview
+const bedrock_region = "us-east-1";  // "us-east-1" "us-west-2" 
 
 export class CdkConversationalChatbotStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
