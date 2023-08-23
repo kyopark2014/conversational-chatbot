@@ -123,6 +123,17 @@ def get_answer_using_template(query):
     #    Standalone question:"""
     #standalone_question_prompt = PromptTemplate.from_template(condense_qa_template)
 
+
+    #prompt_template = """Human: Use the following pieces of context to provide a concise answer to the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
+
+    #{context}
+
+    #Question: {question}
+    #Assistant:"""
+    #PROMPT = PromptTemplate(
+    #    template=prompt_template, input_variables=["context", "question"]
+    #    )
+
     template = """The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know.
 
     Current conversation:
@@ -139,24 +150,10 @@ def get_answer_using_template(query):
         memory=ConversationBufferMemory(ai_prefix="AI Assistant"),
     )
 
-    result = conversation.predict(input="Hi there!")
+    result = conversation.predict(input=query)
     print('result: ', result)
     
-    """
-    qa = RetrievalQA.from_chain_type(
-        llm=llm,
-        chain_type="stuff",
-        retriever=retriever,
-        return_source_documents=True,
-        chain_type_kwargs={"prompt": PROMPT}
-    )
-    result = qa({"query": query})
-        
-    source_documents = result['source_documents']
-    print(source_documents)
-    """
-
-    return result['result']
+    return result
 
 
 
