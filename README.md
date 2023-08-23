@@ -280,6 +280,8 @@ roleLambda.attachInlinePolicy( // add bedrock policy
 
 아래와 같이 Converstion이 적용된 동작을 확인할 수 있습니다.
 
+아래 결과는 첫번째에 실패후 두번째에 성공하고 있습니다. 새로운 케이스로 다시 테스트 예정입니다.
+
 ![noname](https://github.com/kyopark2014/conversational-chatbot/assets/52392004/2e6c9f30-ca69-4a7f-a981-4895a292a449)
 
 
