@@ -6,24 +6,7 @@ LLM 어플리케이션 개발을 위해 LangChain을 활용하였으며, Bedrock
 
 <img src="https://github.com/kyopark2014/simple-chatbot-using-LLM-based-on-amazon-bedrock/assets/52392004/a62d871e-ad88-400b-9d80-6cdf8b3d63a7" width="800">
 
-채팅을 위한 call flow는 아래와 같습니다.
-
-1) 사용자가 채팅창에서 질문(Question)을 입력합니다.
-2) 이것은 Chat API를 이용하여 lambda (chat)에 전달됩니다.
-3) lambda(chat)은 질문을 LLM에 전달합니다.
-4) 답변을 받으면 사용자에게 결과를 전달합니다.
-
-![seq-chat](./sequence/seq-chat.png)
-
-파일업로드 후에 문서 요약(Summerization)을 위한 call flow는 아래와 같습니다.
-
-1) 사용자가 파일 업로드를 요청합니다. 이때 사용하는 Upload API는 lambda (upload)에 전달되어 S3 presigned url을 생성하게 됩니다.
-2) 사용자가 presigned url로 문서를 업로드 하면 S3에 object로 저장됩니다.
-3) Chat API에서 request type을 "document"로 지정하면 lambda (chat)는 S3에서 object를 로드하여 텍스트를 추출합니다.
-4) 채팅창에 업로드한 문서의 요약(Summerization)을 보여지기 위해 summerization을 수행하고 그 결과를 사용자에게 전달합니다.
-
-![seq-upload](./sequence/seq-upload.png)
-
+상세한 동작시나리오는 [Call Flow](https://github.com/kyopark2014/conversational-chatbot/blob/main/call-flow.md)을 참조합니다.
 
 
 ## Bedrock 모델 정보 가져오기
@@ -76,10 +59,42 @@ llm = Bedrock(model_id=modelId, client=boto3_bedrock, model_kwargs=parameters)
 
 ## 질문/답변하기 (Prompt)
 
+### LangChain을 이용한 기본 Question and Answering
+
 LangChang을 이용하여 아래와 같이 간단한 질문과 답변을 Prompt을 이용하여 구현할 수 있습니다. 아래에서 입력인 text prompt를 LangChain 인터페이스를 통해 요청하면 Bedrock의 LLM 모델을 통해 답변을 얻을 수 있습니다.
 
 ```python
 llm(text)
+```
+
+### Prompt Template에 History를 포함하는 방식
+
+history = []
+msg = get_answer_using_template(text)
+
+def get_answer_using_template(query):    
+    prompt_template = """Human: Use the following pieces of context to provide a concise answer to the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
+
+    Current conversation:
+    {history}
+
+    Human: {input}
+    Assistant:"""
+    PROMPT = PromptTemplate(
+        template=prompt_template, input_variables=["history", "input"])
+
+    #print('result: ', result)
+    from langchain.chains import LLMChain
+    chain = LLMChain(llm=llm, prompt=PROMPT)
+
+    result = chain.run({
+        'history': history,
+        'input': query})
+    
+    history.append('Human: '+query)
+    history.append('Assistant: '+result)
+    
+    return result
 ```
 
 
@@ -252,17 +267,19 @@ roleLambda.attachInlinePolicy( // add bedrock policy
 );    
 ```
 
+
 ## 실습하기
 
 ### CDK를 이용한 인프라 설치
 
 [인프라 설치](https://github.com/kyopark2014/chatbot-based-on-bedrock-anthropic/blob/main/deployment.md)에 따라 CDK로 인프라 설치를 진행합니다. [CDK 구현 코드](./cdk-bedrock-simple-chatbot/README.md)에서는 Typescript로 인프라를 정의하는 방법에 대해 상세히 설명하고 있습니다.
 
+
 ### 실행결과
 
-아래와 같이 이메일 작성을 요청합니다.
+아래와 같이 Converstion이 적용된 동작을 확인할 수 있습니다.
 
-![image](https://github.com/kyopark2014/conversational-chatbot/assets/52392004/41375c05-3cee-4499-9add-5a8ecab8da16)
+![noname](https://github.com/kyopark2014/conversational-chatbot/assets/52392004/0d816ee4-dbd3-4bb5-ba3c-d8c50b940cd2)
 
 
 ## Debugging
