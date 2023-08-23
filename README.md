@@ -69,6 +69,7 @@ llm(text)
 
 ### Prompt Template에 History를 포함하는 방식
 
+```python
 history = []
 msg = get_answer_using_template(text)
 
