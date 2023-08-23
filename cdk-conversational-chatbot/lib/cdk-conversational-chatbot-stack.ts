@@ -106,7 +106,7 @@ export class CdkConversationalChatbotStack extends cdk.Stack {
     });
 
     const roleLambda = new iam.Role(this, `role-lambda-chat-for-${projectName}`, {
-      roleName: `role-lambda-chat-for-${projectName}-${region}`,
+      roleName: `role-lambda-chat-for-${projectName}`,
       assumedBy: new iam.CompositePrincipal(
         new iam.ServicePrincipal("lambda.amazonaws.com"),
         new iam.ServicePrincipal("bedrock.amazonaws.com"),
@@ -150,7 +150,7 @@ export class CdkConversationalChatbotStack extends cdk.Stack {
 
     // role
     const role = new iam.Role(this, `api-role-for-${projectName}`, {
-      roleName: `api-role-for-${projectName}-${region}`,
+      roleName: `api-role-for-${projectName}`,
       assumedBy: new iam.ServicePrincipal("apigateway.amazonaws.com")
     });
     role.addToPolicy(new iam.PolicyStatement({

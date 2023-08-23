@@ -18,6 +18,8 @@ from langchain.chains.summarize import load_summarize_chain
 from langchain.agents import create_csv_agent
 from langchain.agents.agent_types import AgentType
 from langchain.llms.bedrock import Bedrock
+from langchain.memory import ConversationBufferMemory
+
 
 s3 = boto3.client('s3')
 s3_bucket = os.environ.get('s3_bucket') # bucket name
@@ -96,6 +98,67 @@ parameters = {
 }
 
 llm = Bedrock(model_id=modelId, client=boto3_bedrock, model_kwargs=parameters)
+
+def get_answer_using_template(query):    
+    #prompt_template = """
+    #    The following is a friendly conversation between a human and an AI. 
+    #    The AI is talkative and provides lots of specific details from its context.
+    #    If the AI does not know the answer to a question, it truthfully says it 
+    #    does not know.
+    #    {context}
+    #    Instruction: Based on the above documents, provide a detailed answer for, {question} Answer "don't know" 
+    #    if not present in the document. 
+    #    Solution:"""
+    #PROMPT = PromptTemplate(
+    #    template=prompt_template, input_variables=["context", "question"],
+    #)
+
+    #condense_qa_template = """
+    #    Given the following conversation and a follow up question, rephrase the follow up question 
+    #    to be a standalone question.
+
+    #    Chat History:
+    #    {chat_history}
+    #    Follow Up Input: {question}
+    #    Standalone question:"""
+    #standalone_question_prompt = PromptTemplate.from_template(condense_qa_template)
+
+    template = """The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know.
+
+    Current conversation:
+    {history}
+    Human: {input}
+    AI Assistant:"""
+    PROMPT = PromptTemplate(input_variables=["history", "input"], template=template)
+
+    from langchain import ConversationChain
+    conversation = ConversationChain(
+        llm=llm, 
+        prompt=PROMPT, 
+        verbose=True, 
+        memory=ConversationBufferMemory(ai_prefix="AI Assistant"),
+    )
+
+    result = conversation.predict(input="Hi there!")
+    print('result: ', result)
+    
+    """
+    qa = RetrievalQA.from_chain_type(
+        llm=llm,
+        chain_type="stuff",
+        retriever=retriever,
+        return_source_documents=True,
+        chain_type_kwargs={"prompt": PROMPT}
+    )
+    result = qa({"query": query})
+        
+    source_documents = result['source_documents']
+    print(source_documents)
+    """
+
+    return result['result']
+
+
 
 def get_summary(file_type, s3_file_name):
     summary = ''
@@ -210,7 +273,9 @@ def lambda_handler(event, context):
     else:             
         if type == 'text':
             text = body
-            msg = llm(text)
+            #msg = llm(text)
+            msg = get_answer_using_template(text)
+
             
         elif type == 'document':
             object = body
