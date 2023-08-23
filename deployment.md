@@ -1,4 +1,4 @@
-![image](https://github.com/kyopark2014/simple-chatbot-using-LLM-based-on-amazon-bedrock/assets/52392004/37ff3a44-bbf3-471c-a0b1-083465b2e8a4)# CDK를 이용한 인프라 설치하기
+![image](https://github.com/kyopark2014/conversational-chatbot/assets/52392004/37ff3a44-bbf3-471c-a0b1-083465b2e8a4)# CDK를 이용한 인프라 설치하기
 
 여기서는 [Cloud9](https://aws.amazon.com/ko/cloud9/)에서 [AWS CDK](https://aws.amazon.com/ko/cdk/)를 이용하여 인프라를 설치합니다.
 
@@ -27,13 +27,13 @@ chmod a+rx resize.sh && ./resize.sh 80
 4) 소스를 다운로드합니다.
 
 ```java
-git clone https://github.com/kyopark2014/simple-chatbot-using-LLM-based-on-amazon-bedrock
+git clone https://github.com/kyopark2014/conversational-chatbot
 ```
 
 5) cdk 폴더로 이동하여 필요한 라이브러리를 설치합니다.
 
 ```java
-cd simple-chatbot-using-LLM-based-on-amazon-bedrock/cdk-bedrock-simple-chatbot/ && npm install
+cd conversational-chatbot/cdk-bedrock-simple-chatbot/ && npm install
 ```
 
 6) bedrock-sdk를 설치합니다.
