@@ -99,6 +99,7 @@ parameters = {
 
 llm = Bedrock(model_id=modelId, client=boto3_bedrock, model_kwargs=parameters)
 
+history = []
 def get_answer_using_template(query):    
     #prompt_template = """
     #    The following is a friendly conversation between a human and an AI. 
@@ -147,7 +148,7 @@ def get_answer_using_template(query):
     Current conversation:
     {history}
 
-    Question: {input}
+    Human: {input}
     Assistant:"""
     PROMPT = PromptTemplate(
         template=prompt_template, input_variables=["history", "input"])
@@ -157,9 +158,11 @@ def get_answer_using_template(query):
     chain = LLMChain(llm=llm, prompt=PROMPT)
 
     result = chain.run({
-        'history': [],
+        'history': history,
         'input': query})
     
+    history.append('Human: '+query)
+    history.append('Assistant: '+result)
 
     #from langchain import ConversationChain
     #conversation = ConversationChain(
