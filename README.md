@@ -277,30 +277,7 @@ roleLambda.attachInlinePolicy( // add bedrock policy
 
 아래와 같이 이메일 작성을 요청합니다.
 
-```text
-Write an email from Bob, Customer Service Manager, to the customer "John Doe" 
-who provided negative feedback on the service provided by our customer support 
-engineer
-```
-
-요청에 맞춰서 적절한 이메일 문장을 생성하였습니다.
-
-![image](https://github.com/kyopark2014/simple-chatbot-using-LLM-based-on-amazon-bedrock/assets/52392004/c3d2eb31-28de-451e-9069-3b0400c36d1f)
-
-
-아래와 같이 코드 생성을 요청합니다.
-
-```text
-Generate and return the code for each module using the programming language and programming framework requested in. Modify this code and return markdowns for each module using the suggestions in: Python Streamlit code for a banking app using DynamoDB
-```
-
-이때의 결과는 아래와 같습니다.
-
-![image](https://github.com/kyopark2014/chatbot-based-on-Falcon-FM/assets/52392004/ed53c663-e035-49dc-9b77-b54dae565cb7)
-
-## 브라우저에서 Chatbot 동작 시험시 주의할점
-
-Chatbot API를 테스트하기 위해 제공하는 Web client는 일반적인 채팅 App처럼 세션 방식(web socket등)이 아니라 RESTful API를 사용합니다. 따라서 LLM에서 응답이 일정시간(30초)이상 지연되는 경우에 답변을 볼 수 없습니다. 이때 응답을 확인하기 위해서는 CloudWatch에서 [lambda-chat](./lambda-chat/lambda_function.py)의 로그를 확인하거나, DynamoDB에 저장된 call log를 확인합니다.
+![image](https://github.com/kyopark2014/conversational-chatbot/assets/52392004/41375c05-3cee-4499-9add-5a8ecab8da16)
 
 
 ## Debugging
