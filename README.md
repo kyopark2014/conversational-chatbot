@@ -333,10 +333,10 @@ Container 접속 후 아래 명령어로 동작을 확인합니다.
 cd .. && python3 test.py
 ```
 
+## Reference 
 
+[How to customize conversational memory](https://python.langchain.com/docs/modules/memory/conversational_customization)
 
-
-
-## Reference
+[langchain.chains.conversation.base.ConversationChain](https://api.python.langchain.com/en/latest/chains/langchain.chains.conversation.base.ConversationChain.html?highlight=conversationchain#langchain.chains.conversation.base.ConversationChain)
 
 [langchain.chains.conversational_retrieval.base.ConversationalRetrievalChain](https://api.python.langchain.com/en/latest/chains/langchain.chains.conversational_retrieval.base.ConversationalRetrievalChain.html)
