@@ -33,7 +33,7 @@ git clone https://github.com/kyopark2014/conversational-chatbot
 5) cdk 폴더로 이동하여 필요한 라이브러리를 설치합니다.
 
 ```java
-cd conversational-chatbot/cdk-bedrock-simple-chatbot/ && npm install
+cd conversational-chatbot/cdk-conversational-chatbot/ && npm install
 ```
 
 6) bedrock-sdk를 설치합니다.
