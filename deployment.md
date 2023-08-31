@@ -43,7 +43,7 @@ cd ../lambda-chat
 curl https://d2eo22ngex1n9g.cloudfront.net/Documentation/SDK/bedrock-python-sdk.zip --output bedrock-python-sdk.zip
 unzip bedrock-python-sdk.zip -d bedrock-sdk 
 rm bedrock-python-sdk.zip
-cd ../cdk-bedrock-simple-chatbot/
+cd ../cdk-conversational-chatbot/
 ```
 
 6) CDK 사용을 위해 Bootstrapping을 수행합니다.
