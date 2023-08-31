@@ -257,9 +257,7 @@ def lambda_handler(event, context):
             text = body
 
             #msg = llm(text)
-            #msg = get_answer_using_template(text)
-
-            msg = conversation.predict(input=text)
+            msg = get_answer_using_template(text)
             
         elif type == 'document':
             object = body
