@@ -9,36 +9,6 @@ LLM 어플리케이션 개발을 위해 LangChain을 활용하였으며, Bedrock
 상세한 동작시나리오는 [Call Flow](https://github.com/kyopark2014/conversational-chatbot/blob/main/call-flow.md)을 참조합니다.
 
 
-## Bedrock 모델 정보 가져오기
-
-Bedrock은 완전관리형 서비스로 API를 이용하여 접속하며, 여기서는 "us-west-2"를 이용하여 아래의 endpoint_url로 접속합니다. 이 주소는 preview 권한을 받을때 안내 받을 수 있습니다. 아래와 같이 boto3.client()을 이용하여 client를 생성합니다. 이후 list_foundation_models()을 이용하여 현재 지원 가능한 LLM에 대한 정보를 획득할 수 있습니다.
-
-```python
-import boto3
-from utils import bedrock
-
-bedrock_region = "us-west-2" 
-bedrock_config = {
-    "region_name":bedrock_region,
-    "endpoint_url":"https://prod.us-west-2.frontend.bedrock.aws.dev"
-}
-    
-if accessType=='aws': # internal user of aws
-    boto3_bedrock = boto3.client(
-        service_name='bedrock’,
-        region_name=bedrock_config["region_name"],
-        endpoint_url=bedrock_config["endpoint_url"],
-    )
-else: # preview user
-    boto3_bedrock = boto3.client(
-        service_name='bedrock’,
-        region_name=bedrock_config["region_name"],
-    )
-
-modelInfo = boto3_bedrock.list_foundation_models()
-print('models: ', modelInfo)
-```
-
 ## LangChain 
 
 아래와 같이 model id와 Bedrock client를 이용하여 LangChain을 정의합니다.
@@ -57,14 +27,29 @@ parameters = {
 llm = Bedrock(model_id=modelId, client=boto3_bedrock, model_kwargs=parameters)
 ```
 
-## 질문/답변하기 (Prompt)
 
-### LangChain을 이용한 기본 Question and Answering
-
-LangChang을 이용하여 아래와 같이 간단한 질문과 답변을 Prompt을 이용하여 구현할 수 있습니다. 아래에서 입력인 text prompt를 LangChain 인터페이스를 통해 요청하면 Bedrock의 LLM 모델을 통해 답변을 얻을 수 있습니다.
+아래와 같이 Conversation을 설정합니다.
 
 ```python
-llm(text)
+from langchain.chains import ConversationChain
+from langchain.memory import ConversationBufferMemory
+memory = ConversationBufferMemory()
+conversation = ConversationChain(
+    llm=llm, verbose=True, memory=memory
+)
+```
+
+
+## 대화하기
+
+## 질문/답변하기 (Prompt)
+
+### LangChain을 이용한 기본 대화
+
+LangChang을 대화를 할 수 있습니다.
+
+```python
+msg = conversation.predict(input=text)
 ```
 
 ### Prompt Template에 History를 포함하는 방식
