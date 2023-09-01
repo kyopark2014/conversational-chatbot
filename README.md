@@ -307,3 +307,10 @@ cd .. && python3 test.py
 [langchain.chains.conversation.base.ConversationChain](https://api.python.langchain.com/en/latest/chains/langchain.chains.conversation.base.ConversationChain.html?highlight=conversationchain#langchain.chains.conversation.base.ConversationChain)
 
 [langchain.chains.conversational_retrieval.base.ConversationalRetrievalChain](https://api.python.langchain.com/en/latest/chains/langchain.chains.conversational_retrieval.base.ConversationalRetrievalChain.html)
+
+[Store and reference chat history](https://python.langchain.com/docs/use_cases/question_answering/how_to/chat_vector_db)
+
+[Tutorial: ChatGPT Over Your Data](https://blog.langchain.dev/tutorial-chatgpt-over-your-data/)
+
+[ValidationError: 1 validation error for ConversationalRetrievalChain](https://github.com/langchain-ai/langchain/issues/6635)
+
