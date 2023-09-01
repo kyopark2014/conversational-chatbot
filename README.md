@@ -314,3 +314,4 @@ cd .. && python3 test.py
 
 [ValidationError: 1 validation error for ConversationalRetrievalChain](https://github.com/langchain-ai/langchain/issues/6635)
 
+[ConversationalRetrievalChain + Memory](https://github.com/langchain-ai/langchain/issues/2303)
