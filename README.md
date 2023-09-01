@@ -312,6 +312,9 @@ cd .. && python3 test.py
 
 [Tutorial: ChatGPT Over Your Data](https://blog.langchain.dev/tutorial-chatgpt-over-your-data/)
 
+[LLM memory abstractions](https://www.linkedin.com/pulse/llm-memory-abstractions-maksud-ibrahimov/)
+
+
 [ValidationError: 1 validation error for ConversationalRetrievalChain](https://github.com/langchain-ai/langchain/issues/6635)
 
 [ConversationalRetrievalChain + Memory](https://github.com/langchain-ai/langchain/issues/2303)
