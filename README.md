@@ -276,35 +276,6 @@ roleLambda.attachInlinePolicy( // add bedrock policy
 ![image](https://github.com/kyopark2014/conversational-chatbot/assets/52392004/815345a3-714f-4d12-a3bd-0af1d1d36c0d)
 
 
-## Debugging
-
-아래와 같이 [test.py](./lambda-chat/test.py)를 이용하여 local에서 컨테이너 이미지를 디버깅할 수 있습니다. 먼저 아래와 같이 이미지를 빌드합니다.
-
-```text
-docker build -t lambda_function-test:v1 .
-```
-
-Docker를 실행합니다.
-```text
-docker run -d -p 8080:8080 lambda_function-test:v1
-```
-
-아래와 같이 "docker ps"명령어로 Container ID를 확인 할 수 있습니다.
-```text
-CONTAINER ID   IMAGE          COMMAND                  CREATED         STATUS         PORTS                    NAMES
-41e297948511   inference:v1   "/lambda-entrypoint.…"   6 seconds ago   Up 4 seconds   0.0.0.0:8080->8080/tcp   stupefied_carson
-```
-
-아래와 같이 Bash shell로 접속합니다.
-```text
-docker exec -it  41e297948511 /bin/bash
-```
-
-Container 접속 후 아래 명령어로 동작을 확인합니다.
-
-```text
-cd .. && python3 test.py
-```
 
 ## Reference 
 
