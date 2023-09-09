@@ -90,12 +90,19 @@ else: # preview user
 modelInfo = boto3_bedrock.list_foundation_models()    
 print('models: ', modelInfo)
 
-parameters = {
-    "maxTokenCount":1024,
-    "stopSequences":[],
-    "temperature":0,
-    "topP":0.9
-}
+def get_parameter(modelId):
+    if modelId == 'amazon.titan-tg1-large': 
+        return {
+            "maxTokenCount":1024,
+            "stopSequences":[],
+            "temperature":0,
+            "topP":0.9
+        }
+    elif modelId == 'anthropic.claude-v1' or modelId == 'anthropic.claude-v2':
+        return {
+            "max_tokens_to_sample":1024,
+        }
+parameters = get_parameter(modelId)
 
 llm = Bedrock(model_id=modelId, client=boto3_bedrock, model_kwargs=parameters)
 
@@ -227,39 +234,14 @@ def lambda_handler(event, context):
             msg += f"{model['modelId']}\n"
         
         msg += f"current model: {modelId}"
-        print('model lists: ', msg)
-    
-    elif type == 'text' and body[:20] == 'change the model to ':
-        new_model = body.rsplit('to ', 1)[-1]
-        print(f"new model: {new_model}, current model: {modelId}")
-
-        if modelId == new_model:
-            msg = "No change! The new model is the same as the current model."
-        else:        
-            lists = modelInfo['modelSummaries']
-            isChanged = False
-            for model in lists:
-                if model['modelId'] == new_model:
-                    print(f"new modelId: {new_model}")
-                    modelId = new_model
-                    llm = Bedrock(model_id=modelId, client=boto3_bedrock)
-                    isChanged = True
-                    save_configuration(userId, modelId)
-
-            if isChanged:
-                msg = f"The model is changed to {modelId}"
-            else:
-                msg = f"{modelId} is not in lists."
-        print('msg: ', msg)
-
+        print('model lists: ', msg)    
     else:             
         if type == 'text':
             text = body
 
-            #msg = llm(text)
+            msg = llm(text)
             #msg = get_answer_using_template(text)
-
-            msg = conversation.predict(input=text)
+            #msg = conversation.predict(input=text)
             
         elif type == 'document':
             object = body
