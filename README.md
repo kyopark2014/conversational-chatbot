@@ -57,32 +57,49 @@ msg = conversation.predict(input=text)
 ### Prompt Template에 History를 포함하는 방식
 
 ```python
-history = []
-msg = get_answer_using_template(text)
+chat_memory = ConversationBufferMemory(human_prefix='Human', ai_prefix='Assistant')
 
-def get_answer_using_template(query):    
-    prompt_template = """Human: Use the following pieces of context to provide a concise answer to the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
+msg = get_answer_using_chat_history(text, chat_memory)
 
-    Current conversation:
-    {history}
+def get_answer_using_chat_history(query, chat_memory):  
+    condense_template = """\n\nHuman: Use the following pieces of context to provide a concise answer to the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
+      
+    {chat_history}
+        
+    Human: {question}
 
-    Human: {input}
     Assistant:"""
-    PROMPT = PromptTemplate(
-        template=prompt_template, input_variables=["history", "input"])
-
-    #print('result: ', result)
-    from langchain.chains import LLMChain
-    chain = LLMChain(llm=llm, prompt=PROMPT)
-
-    result = chain.run({
-        'history': history,
-        'input': query})
     
-    history.append('Human: '+query)
-    history.append('Assistant: '+result)
-    
-    return result
+    CONDENSE_QUESTION_PROMPT = PromptTemplate.from_template(condense_template)
+        
+    # extract chat history
+    chats = chat_memory.load_memory_variables({})
+    chat_history_all = chats['history']
+    print('chat_history_all: ', chat_history_all)
+
+    # use last two chunks of chat history
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=2000,
+        chunk_overlap=0,
+        separators=["\n\n", "\n", ".", " ", ""],
+        length_function = len)
+    texts = text_splitter.split_text(chat_history_all) 
+
+    pages = len(texts)
+    print('pages: ', pages)
+
+    if pages >= 2:
+        chat_history = f"{texts[pages-2]} {texts[pages-1]}"
+    elif pages == 1:
+        chat_history = texts[0]
+    else:  # 0 page
+        chat_history = ""
+    print('chat_history:\n ', chat_history)
+
+    # make a question using chat history
+    result = llm(CONDENSE_QUESTION_PROMPT.format(question=query, chat_history=chat_history))
+
+    return result   
 ```
 
 
