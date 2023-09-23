@@ -28,6 +28,15 @@ llm = Bedrock(model_id=modelId, client=boto3_bedrock, model_kwargs=parameters)
 ```
 
 
+
+
+
+## 대화하기
+
+## 질문/답변하기 (Prompt)
+
+### LangChain을 이용한 기본 대화
+
 아래와 같이 Conversation을 설정합니다.
 
 ```python
@@ -39,14 +48,7 @@ conversation = ConversationChain(
 )
 ```
 
-
-## 대화하기
-
-## 질문/답변하기 (Prompt)
-
-### LangChain을 이용한 기본 대화
-
-LangChang을 대화를 할 수 있습니다.
+이제 아래와 같이 대화를 할 수 있습니다.
 
 ```python
 msg = conversation.predict(input=text)
