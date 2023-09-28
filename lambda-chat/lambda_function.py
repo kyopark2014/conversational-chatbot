@@ -54,8 +54,8 @@ else: # preview user
         region_name=bedrock_config["region_name"],
     )
 
-modelInfo = boto3_bedrock.list_foundation_models()    
-print('models: ', modelInfo)
+#modelInfo = boto3_bedrock.list_foundation_models()    
+#print('models: ', modelInfo)
 
 HUMAN_PROMPT = "\n\nHuman:"
 AI_PROMPT = "\n\nAssistant:"
