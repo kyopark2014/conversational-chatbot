@@ -17,7 +17,7 @@ const stage = 'dev';
 const s3_prefix = 'docs';
 const endpoint_url = "https://prod.us-west-2.frontend.bedrock.aws.dev";
 const model_id = "anthropic.claude-v2"; // amazon.titan-tg1-large, amazon.titan-tg1-xlarge, anthropic.claude-v1, anthropic.claude-v2
-const projectName = `bedrock-with-simple`; 
+const projectName = `conversation-chatbot`; 
 
 const bucketName = `storage-for-${projectName}-${region}`; 
 const accessType = "preview"; // aws or preview
