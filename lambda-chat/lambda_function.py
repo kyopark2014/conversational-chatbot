@@ -32,7 +32,7 @@ modelId = os.environ.get('model_id', 'amazon.titan-tg1-large')
 print('model_id: ', modelId)
 accessType = os.environ.get('accessType', 'aws')
 conversationMode = os.environ.get('conversationMode', 'false')
-methodOfConversation = 'PromptTemplate' # ConversationChain or PromptTemplate
+methodOfConversation = 'ConversationChain' # ConversationChain or PromptTemplate
 
 # Bedrock Contiguration
 bedrock_region = bedrock_region
@@ -99,7 +99,8 @@ def get_answer_using_chat_history(query, chat_memory):
         
         Human: {question}
         
-        Assistant:"""
+        Assistant:
+        """
     else:
         condense_template = """\n\nHuman: Using the following conversation, answer friendly for the newest question. If you don't know the answer, just say that you don't know, don't try to make up an answer. You will be acting as a thoughtful advisor.
 
@@ -107,7 +108,11 @@ def get_answer_using_chat_history(query, chat_memory):
         
         Human: {question}
 
-        Assistant:"""
+        Assistant:
+        """
+
+        #claude_prompt = PromptTemplate.from_template("""The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know.
+                                                     
     
     CONDENSE_QUESTION_PROMPT = PromptTemplate.from_template(condense_template)
         
@@ -342,6 +347,18 @@ def lambda_handler(event, context):
             else:            
                 if conversationMode == 'true':
                     if methodOfConversation == 'ConversationChain':
+                        #condense_template = """\n\nHuman: 아래 문맥(context)을 참조했음에도 답을 알 수 없다면, 솔직히 모른다고 말합니다.
+                        condense_template = """다음은 Human과 Assistant의 친근한 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 아래 문맥(context)을 참조했음에도 답을 알 수 없다면, 솔직히 모른다고 말합니다.
+
+                        {history}
+        
+                        Human: {question}
+        
+                        Assistant:
+                        """
+
+                        conversation.prompt = PromptTemplate.from_template(condense_template)
+
                         msg = conversation.predict(input=text)
 
                         # extract chat history
