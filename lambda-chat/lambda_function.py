@@ -9,7 +9,7 @@ import csv
 import sys
 import re
 
-from langchain import PromptTemplate, SagemakerEndpoint
+from langchain.prompts import PromptTemplate
 from langchain.llms.sagemaker_endpoint import LLMContentHandler
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.text_splitter import RecursiveCharacterTextSplitter
