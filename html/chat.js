@@ -38,11 +38,16 @@ HashMap.prototype = {
 
 // message log list
 var msglist = [];
-var maxMsgItems = 50;
+var maxMsgItems = 200;
 var msgHistory = new HashMap();
-var callee = "John";
+var callee = "AWS";
 var index=0;
-var userId = uuidv4();
+
+var userId = localStorage.getItem('userId'); // set userID if exists 
+if(userId=="") {
+    userId = uuidv4();
+}
+console.log('userId: ', userId);
 
 for (i=0;i<maxMsgItems;i++) {
     msglist.push(document.getElementById('msgLog'+i));
@@ -63,9 +68,24 @@ calleeId.textContent = "AWS";
 
 index = 0;
 
-addNotifyMessage("start chat with Amazon Bedrock");
+addNotifyMessage("Start chat with Amazon Bedrock");
 
-addReceivedMessage("Amazon Bedrock을 이용하여 주셔서 감사합니다. 원하는 질문을 입력하세요. 아래의 파일 버튼을 선택해 TXT, PDF, CSV 문서를 올리면 요약(Summerization)을 하실 수 있습니다.")
+addReceivedMessage("Welcome to Amazon Bedrock. Use the conversational chatbot and summarize documents, TXT, PDF, and CSV. ")
+
+// get history
+function getAllowTime() {    
+    let allowableDays = 2; // two day's history
+    
+    let current = new Date();
+    let allowable = new Date(current.getTime() - 24*60*60*1000*allowableDays);  
+    let allowTime = getDate(allowable)+' '+getTime(current);
+    console.log('Current Time: ', getDate(current)+' '+getTime(current));
+    console.log('Allow Time: ', allowTime);
+    
+    return allowTime;
+}
+let allowTime = getAllowTime();
+getHistory(userId, allowTime);
 
 // Listeners
 message.addEventListener('keyup', function(e){
@@ -74,9 +94,17 @@ message.addEventListener('keyup', function(e){
     }
 });
 
+// refresh button
 refreshChatWindow.addEventListener('click', function(){
-    console.log('update chat window');
-    updateChatWindow(callee);
+    console.log('go back user input menu');
+    window.location.href = "index.html";
+});
+
+// depart button
+depart.addEventListener('click', function(){
+    console.log('depart icon');
+    
+    deleteItems(userId);    
 });
 
 sendBtn.addEventListener('click', onSend);
@@ -85,7 +113,13 @@ function onSend(e) {
     
     if(message.value != '') {
         console.log("msg: ", message.value);
-        addSentMessage(message.value);
+
+        let current = new Date();
+        let datastr = getDate(current);
+        let timestr = getTime(current);
+        let requestTime = datastr+' '+timestr
+        addSentMessage(message.value, timestr);
+        sendRequest(message.value, requestTime);
     }
     else {
         console.log("msg: ", "empty!");
@@ -110,28 +144,73 @@ function uuidv4() {
     })
 })();
 
-function addSentMessage(text) {
-    console.log("sent message: "+text);
+function getDate(current) {    
+    return current.toISOString().slice(0,10);
+}
 
-    var date = new Date();
-    var timestr = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+function getTime(current) {
+    let time_map = [current.getHours(), current.getMinutes(), current.getSeconds()].map((a)=>(a < 10 ? '0' + a : a));
+    return time_map.join(':');
+}
+
+function addSentMessage(text, timestr) {
     index++;
 
-    msglist[index].innerHTML = 
-        `<div class="chat-sender chat-sender--right"><h1>${timestr}</h1>${text}&nbsp;<h2 id="status${index}"></h2></div>`;   
+    var length = text.length;    
+    console.log('length: ', length);
+    if(length < 10) {
+        msglist[index].innerHTML = 
+            `<div class="chat-sender20 chat-sender--right"><h1>${timestr}</h1>${text}&nbsp;<h2 id="status${index}"></h2></div>`;   
+    }
+    else if(length < 14) {
+        msglist[index].innerHTML = 
+            `<div class="chat-sender25 chat-sender--right"><h1>${timestr}</h1>${text}&nbsp;<h2 id="status${index}"></h2></div>`;   
+    }
+    else if(length < 17) {
+        msglist[index].innerHTML = 
+            `<div class="chat-sender30 chat-sender--right"><h1>${timestr}</h1>${text}&nbsp;<h2 id="status${index}"></h2></div>`;
+    }  
+    else if(length < 22) {
+        msglist[index].innerHTML = 
+            `<div class="chat-sender35 chat-sender--right"><h1>${timestr}</h1>${text}&nbsp;<h2 id="status${index}"></h2></div>`;
+    }
+    else if(length < 26) {
+        msglist[index].innerHTML = 
+            `<div class="chat-sender40 chat-sender--right"><h1>${timestr}</h1>${text}&nbsp;<h2 id="status${index}"></h2></div>`;
+    }
+    else if(length < 35) {
+        msglist[index].innerHTML = 
+            `<div class="chat-sender50 chat-sender--right"><h1>${timestr}</h1>${text}&nbsp;<h2 id="status${index}"></h2></div>`;
+    }
+    else if(length < 80) {
+        msglist[index].innerHTML = 
+            `<div class="chat-sender60 chat-sender--right"><h1>${timestr}</h1>${text}&nbsp;<h2 id="status${index}"></h2></div>`;
+    }  
+    else if(length < 145) {
+        msglist[index].innerHTML = 
+            `<div class="chat-sender70 chat-sender--right"><h1>${timestr}</h1>${text}&nbsp;<h2 id="status${index}"></h2></div>`;
+    }  
+    else {
+        msglist[index].innerHTML = 
+            `<div class="chat-sender80 chat-sender--right"><h1>${timestr}</h1>${text}&nbsp;<h2 id="status${index}"></h2></div>`;
+    }     
 
-    sendRequest(text);    
+    chatPanel.scrollTop = chatPanel.scrollHeight;  // scroll needs to move bottom
 }       
 
-function addSentMessageForSummary(text) {  
+function addSentMessageForSummary(text, timestr) {  
     console.log("sent message: "+text);
-
-    var date = new Date();
-    var timestr = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
     index++;
 
-    msglist[index].innerHTML = 
-        `<div class="chat-sender chat-sender--right"><h1>${timestr}</h1>${text}&nbsp;<h2 id="status${index}"></h2></div>`;   
+    let length = text.length;
+    if(length < 100) {
+        msglist[index].innerHTML = 
+            `<div class="chat-sender60 chat-sender--right"><h1>${timestr}</h1>${text}&nbsp;<h2 id="status${index}"></h2></div>`;   
+    }
+    else {
+        msglist[index].innerHTML = 
+            `<div class="chat-sender80 chat-sender--right"><h1>${timestr}</h1>${text}&nbsp;<h2 id="status${index}"></h2></div>`;
+    }   
 
     chatPanel.scrollTop = chatPanel.scrollHeight;  // scroll needs to move bottom
 }  
@@ -139,15 +218,41 @@ function addSentMessageForSummary(text) {
 function addReceivedMessage(msg) {
     // console.log("add received message: "+msg);
     sender = "Chatbot"
-    var date = new Date();
-    var timestr = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
     index++;
 
     msg = msg.replaceAll("\n", "<br/>");
 
-    // msglist[index].innerHTML =  `<div class="chat-receiver chat-receiver--left"><h1>${sender}</h1><h2>${timestr}</h2>${msg}&nbsp;</div>`;     
-    msglist[index].innerHTML = `<div class="chat-receiver chat-receiver--left"><h1>${sender}</h1>${msg}&nbsp;</div>`;  
+    var length = msg.length;
+    // console.log("length: ", length);
 
+    if(length < 10) {
+        msglist[index].innerHTML = `<div class="chat-receiver20 chat-receiver--left"><h1>${sender}</h1>${msg}&nbsp;</div>`;  
+    }
+    else if(length < 14) {
+        msglist[index].innerHTML = `<div class="chat-receiver25 chat-receiver--left"><h1>${sender}</h1>${msg}&nbsp;</div>`;  
+    }
+    else if(length < 17) {
+        msglist[index].innerHTML = `<div class="chat-receiver30 chat-receiver--left"><h1>${sender}</h1>${msg}&nbsp;</div>`;  
+    }
+    else if(length < 22) {
+        msglist[index].innerHTML = `<div class="chat-receiver35 chat-receiver--left"><h1>${sender}</h1>${msg}&nbsp;</div>`;  
+    }
+    else if(length < 25) {
+        msglist[index].innerHTML = `<div class="chat-receiver40 chat-receiver--left"><h1>${sender}</h1>${msg}&nbsp;</div>`;  
+    }
+    else if(length < 35) {
+        msglist[index].innerHTML = `<div class="chat-receiver50 chat-receiver--left"><h1>${sender}</h1>${msg}&nbsp;</div>`;  
+    }
+    else if(length < 80) {
+        msglist[index].innerHTML = `<div class="chat-receiver60 chat-receiver--left"><h1>${sender}</h1>${msg}&nbsp;</div>`;  
+    }
+    else if(length < 145) {
+        msglist[index].innerHTML = `<div class="chat-receiver70 chat-receiver--left"><h1>${sender}</h1>${msg}&nbsp;</div>`;  
+    }
+    else {
+        msglist[index].innerHTML = `<div class="chat-receiver80 chat-receiver--left"><h1>${sender}</h1>${msg}&nbsp;</div>`;  
+    }
+     
     chatPanel.scrollTop = chatPanel.scrollHeight;  // scroll needs to move bottom
 }
 
@@ -191,7 +296,11 @@ attachFile.addEventListener('click', function(){
                 contentType = 'text/csv'
             }
 
-            addSentMessageForSummary("uploading the selected pdf in order to summerize...");
+            let current = new Date();
+            let datastr = getDate(current);
+            let timestr = getTime(current);
+            let requestTime = datastr+' '+timestr
+            addSentMessageForSummary("uploading the selected file in order to summerize...", timestr);
 
             const uri = "upload";
             const xhr = new XMLHttpRequest();
@@ -223,7 +332,7 @@ attachFile.addEventListener('click', function(){
                             console.log(xmlHttp.responseText);
                                            
                             // summary for the upload file
-                            sendRequestForSummary(filename);
+                            sendRequestForSummary(filename, requestTime);
                         }
                         else if(xmlHttp.readyState == XMLHttpRequest.DONE && xmlHttp.status != 200) {
                             console.log('status' + xmlHttp.status);
@@ -252,9 +361,15 @@ attachFile.addEventListener('click', function(){
     return false;
 });
 
-function sendRequest(text) {
+let isResponsed = new HashMap();
+let retryNum = new HashMap();
+function sendRequest(text, requestTime) {
     const uri = "chat";
     const xhr = new XMLHttpRequest();
+
+    let requestId = uuidv4();
+    isResponsed.put(requestId, false);
+    retryNum.put(requestId, 12); // max 60s (5x12)
 
     xhr.open("POST", uri, true);
     xhr.onreadystatechange = () => {
@@ -264,11 +379,20 @@ function sendRequest(text) {
             
             addReceivedMessage(response.msg)
         }
+        else if(xhr.readyState ===4 && xhr.status === 504) {
+            console.log("response: " + xhr.readyState + ', xhr.status: '+xhr.status);
+
+            getResponse(requestId);
+        }
+        else {
+            console.log("response: " + xhr.readyState + ', xhr.status: '+xhr.status);
+        }
     };
 
     var requestObj = {
-        "user-id": userId,
-        "request-id": uuidv4(),
+        "user_id": userId,
+        "request_id": requestId,
+        "request_time": requestTime,
         "type": "text",
         "body":text
     }
@@ -279,9 +403,13 @@ function sendRequest(text) {
     xhr.send(blob);            
 }
 
-function sendRequestForSummary(object) {
+function sendRequestForSummary(object, requestTime) {
     const uri = "chat";
     const xhr = new XMLHttpRequest();
+
+    let requestId = uuidv4();
+    isResponsed.put(requestId, false);
+    retryNum.put(requestId, 60); // max 300s (5x60)
 
     xhr.open("POST", uri, true);
     xhr.onreadystatechange = () => {
@@ -291,11 +419,20 @@ function sendRequestForSummary(object) {
             
             addReceivedMessage(response.msg)
         }
-    };
+        else if(xhr.readyState ===4 && xhr.status === 504) {
+            console.log("response: " + xhr.readyState + ', xhr.status: '+xhr.status);
 
+            getResponse(requestId);
+        }
+        else {
+            console.log("response: " + xhr.readyState + ', xhr.status: '+xhr.status);
+        }
+    };
+    
     var requestObj = {
-        "user-id": userId,
-        "request-id": uuidv4(),
+        "user_id": userId,
+        "request_id": requestId,
+        "request_time": requestTime,
         "type": "document",
         "body": object
     }
@@ -306,3 +443,117 @@ function sendRequestForSummary(object) {
     xhr.send(blob);            
 }
 
+function delay(ms = 1000) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+async function getResponse(requestId) {
+    await delay(5000);
+    
+    let n = retryNum.get(requestId);
+    if(n == 0) {
+        console.log('Failed!')
+        return;
+    }
+    else {
+        console.log('Retry!');
+        retryNum.put(requestId, n-1);
+        sendRequestForRetry(requestId);
+    }    
+}
+
+function sendRequestForRetry(requestId) {
+    const uri = "query";
+    const xhr = new XMLHttpRequest();
+
+    xhr.open("POST", uri, true);
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            response = JSON.parse(xhr.responseText);
+            console.log("response: " + JSON.stringify(response));
+                        
+            if(response.msg) {
+                isResponsed.put(requestId, true);
+                addReceivedMessage(response.msg);        
+                
+                console.log('completed!');
+            }            
+            else {
+                console.log('The request is not completed yet.');
+
+                getResponse(requestId);
+            }
+        }
+    };
+    
+    var requestObj = {
+        "request_id": requestId,
+    }
+    console.log("request: " + JSON.stringify(requestObj));
+
+    var blob = new Blob([JSON.stringify(requestObj)], {type: 'application/json'});
+
+    xhr.send(blob);            
+}
+
+function getHistory(userId, allowTime) {
+    const uri = "history";
+    const xhr = new XMLHttpRequest();
+
+    xhr.open("POST", uri, true);
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            let response = JSON.parse(xhr.responseText);
+            let history = JSON.parse(response['msg']);
+            // console.log("history: " + JSON.stringify(history));
+                        
+            for(let i=0; i<history.length; i++) {
+                if(history[i].type=='text') {                
+                    // let timestr = history[i].request_time.substring(11, 19);
+                    let timestr = history[i].request_time;
+                    let msg = history[i].msg;
+                    let body = history[i].body;
+                    addSentMessage(body, timestr)
+                    addReceivedMessage(msg);                            
+                }                 
+            }         
+            if(history.length>=1) {
+                addNotifyMessage("Welcome back to the conversation");               
+                chatPanel.scrollTop = chatPanel.scrollHeight;  // scroll needs to move bottom
+            }
+        }
+    };
+    
+    var requestObj = {
+        "userId": userId,
+        "allowTime": allowTime
+    }
+    console.log("request: " + JSON.stringify(requestObj));
+
+    var blob = new Blob([JSON.stringify(requestObj)], {type: 'application/json'});
+
+    xhr.send(blob);            
+}
+
+function deleteItems(userId) {
+    const uri = "delete";
+    const xhr = new XMLHttpRequest();
+
+    xhr.open("POST", uri, true);
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            let response = JSON.parse(xhr.responseText);
+            console.log("response: " + JSON.stringify(response));
+
+            window.location.href = "index.html";
+        }
+    };
+    
+    var requestObj = {
+        "userId": userId
+    }
+    console.log("request: " + JSON.stringify(requestObj));
+
+    var blob = new Blob([JSON.stringify(requestObj)], {type: 'application/json'});
+
+    xhr.send(blob);            
+}
