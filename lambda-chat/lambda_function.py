@@ -342,6 +342,12 @@ def lambda_handler(event, context):
                 if conversationMode == 'true':
                     if methodOfConversation == 'ConversationChain':
                         msg = conversation.predict(input=text)
+
+                        # extract chat history
+                        chats = chat_memory.load_memory_variables({})
+                        chat_history_all = chats['history']
+                        print('chat_history_all: ', chat_history_all)
+                        
                     elif methodOfConversation == 'PromptTemplate':
                         msg = get_answer_using_chat_history(text, chat_memory)
 
