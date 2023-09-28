@@ -32,7 +32,7 @@ modelId = os.environ.get('model_id', 'amazon.titan-tg1-large')
 print('model_id: ', modelId)
 accessType = os.environ.get('accessType', 'aws')
 conversationMode = os.environ.get('conversationMode', 'false')
-methodOfConversation = 'ConversationChain' # ConversationChain or PromptTemplate
+methodOfConversation = 'PromptTemplate' # ConversationChain or PromptTemplate
 
 # Bedrock Contiguration
 bedrock_region = bedrock_region
@@ -93,12 +93,13 @@ def get_answer_using_chat_history(query, chat_memory):
 
     if word_kor:
         #condense_template = """\n\nHuman: 아래 문맥(context)을 참조했음에도 답을 알 수 없다면, 솔직히 모른다고 말합니다.
-        condense_template = """다음은 Human과 Assistant의 친근한 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 아래 문맥(context)을 참조했음에도 답을 알 수 없다면, 솔직히 모른다고 말합니다.
+        condense_template = """Human: 다음은 Human과 Assistant의 친근한 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 아래 문맥(context)을 참조했음에도 답을 알 수 없다면, 솔직히 모른다고 말합니다.
 
         {chat_history}
         
         Human: {question}
-        """
+        
+        Assistant:"""
     else:
         condense_template = """\n\nHuman: Using the following conversation, answer friendly for the newest question. If you don't know the answer, just say that you don't know, don't try to make up an answer. You will be acting as a thoughtful advisor.
 
@@ -347,7 +348,7 @@ def lambda_handler(event, context):
                         chats = chat_memory.load_memory_variables({})
                         chat_history_all = chats['history']
                         print('chat_history_all: ', chat_history_all)
-                        
+
                     elif methodOfConversation == 'PromptTemplate':
                         msg = get_answer_using_chat_history(text, chat_memory)
 
