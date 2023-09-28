@@ -40,7 +40,7 @@ cd conversational-chatbot/cdk-conversational-chatbot/ && npm install
 
 ```java
 cd ../lambda-chat
-curl https://d2eo22ngex1n9g.cloudfront.net/Documentation/SDK/bedrock-python-sdk.zip --output bedrock-python-sdk.zip
+curl https://d2eo22ngex1n9g.cloudfront.net/Documentation/SDK/Python/bedrock-runtime.zip --output bedrock-python-sdk.zip
 unzip bedrock-python-sdk.zip -d bedrock-sdk
 rm bedrock-python-sdk.zip
 cd ../cdk-conversational-chatbot/
