@@ -22,7 +22,7 @@ const projectName = `conversation-chatbot`;
 const bucketName = `storage-for-${projectName}-${region}`; 
 const accessType = "preview"; // aws or preview
 const bedrock_region = "us-east-1";  // "us-east-1" "us-west-2" 
-const conversationMode = 'true'; 
+const conversationMode = 'false'; 
 
 export class CdkConversationalChatbotStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
