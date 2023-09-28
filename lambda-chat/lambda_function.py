@@ -44,13 +44,13 @@ bedrock_config = {
 # supported llm list from bedrock
 if accessType=='aws':  # internal user of aws
     boto3_bedrock = boto3.client(
-        service_name='bedrock',
+        service_name='bedrock-runtime',
         region_name=bedrock_config["region_name"],
         endpoint_url=bedrock_config["endpoint_url"],
     )
 else: # preview user
     boto3_bedrock = boto3.client(
-        service_name='bedrock',
+        service_name='bedrock-runtime',
         region_name=bedrock_config["region_name"],
     )
 
