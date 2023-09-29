@@ -137,7 +137,7 @@ export class CdkConversationalChatbotStack extends cdk.Stack {
       }
     });     */
     // Lambda for chat
-  /*  const lambdaChatApi = new lambda.Function(this, `lambda-chat-for-${projectName}`, {
+    const lambdaChatApi = new lambda.Function(this, `lambda-chat-for-${projectName}`, {
       description: 'lambda for chat api',
       functionName: `lambda-chat-api-for-${projectName}`,
       handler: 'lambda_function.lambda_handler',
@@ -410,6 +410,6 @@ export class CdkConversationalChatbotStack extends cdk.Stack {
       cachePolicy: cloudFront.CachePolicy.CACHING_DISABLED,
       allowedMethods: cloudFront.AllowedMethods.ALLOW_ALL,  
       viewerProtocolPolicy: cloudFront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-    }); */
+    });
   }
 }
