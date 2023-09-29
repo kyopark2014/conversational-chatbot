@@ -26,33 +26,16 @@ s3 = boto3.client('s3')
 s3_bucket = os.environ.get('s3_bucket') # bucket name
 s3_prefix = os.environ.get('s3_prefix')
 callLogTableName = os.environ.get('callLogTableName')
-endpoint_url = os.environ.get('endpoint_url', 'https://prod.us-west-2.frontend.bedrock.aws.dev')
 bedrock_region = os.environ.get('bedrock_region', 'us-west-2')
 modelId = os.environ.get('model_id', 'amazon.titan-tg1-large')
 print('model_id: ', modelId)
-accessType = os.environ.get('accessType', 'aws')
 conversationMode = os.environ.get('conversationMode', 'false')
 methodOfConversation = 'ConversationChain' # ConversationChain or PromptTemplate
-
-# Bedrock Contiguration
-bedrock_region = bedrock_region
-bedrock_config = {
-    "region_name":bedrock_region,
-    "endpoint_url":endpoint_url
-}
-   
-# supported llm list from bedrock
-if accessType=='aws':  # internal user of aws
-    boto3_bedrock = boto3.client(
-        service_name='bedrock-runtime',
-        region_name=bedrock_config["region_name"],
-        endpoint_url=bedrock_config["endpoint_url"],
-    )
-else: # preview user
-    boto3_bedrock = boto3.client(
-        service_name='bedrock-runtime',
-        region_name=bedrock_config["region_name"],
-    )
+  
+boto3_bedrock = boto3.client(
+    service_name='bedrock-runtime',
+    region_name=bedrock_region,
+)
 
 #modelInfo = boto3_bedrock.list_foundation_models()    
 #print('models: ', modelInfo)
