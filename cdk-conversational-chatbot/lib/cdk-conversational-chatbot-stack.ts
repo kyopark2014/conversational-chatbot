@@ -119,7 +119,7 @@ export class CdkConversationalChatbotStack extends cdk.Stack {
     );      
 
     // Lambda for chat using langchain (container)
-    const lambdaChatApi = new lambda.DockerImageFunction(this, `lambda-chat-for-${projectName}`, {
+  /*  const lambdaChatApi = new lambda.DockerImageFunction(this, `lambda-chat-for-${projectName}`, {
       description: 'lambda for chat api',
       functionName: `lambda-chat-api-for-${projectName}`,
       code: lambda.DockerImageCode.fromImageAsset(path.join(__dirname, '../../lambda-chat')),
@@ -135,7 +135,28 @@ export class CdkConversationalChatbotStack extends cdk.Stack {
         accessType: accessType,
         conversationMode: conversationMode
       }
-    });     
+    });     */
+    // Lambda for chat
+    const lambdaChatApi = new lambda.Function(this, `lambda-chat-for-${projectName}`, {
+      description: 'lambda for chat api',
+      functionName: `lambda-chat-api-for-${projectName}`,
+      handler: 'lambda_function.lambda_handler',
+      role: roleLambda,
+      timeout: cdk.Duration.seconds(300),
+      runtime: lambda.Runtime.PYTHON_3_11,
+      code: lambda.Code.fromAsset(path.join(__dirname, '../../lambda-chat')),
+      logRetention: logs.RetentionDays.ONE_DAY,
+      environment: {
+        bedrock_region: bedrock_region,
+        endpoint_url: endpoint_url,
+        model_id: model_id,
+        s3_bucket: s3Bucket.bucketName,
+        s3_prefix: s3_prefix,
+        callLogTableName: callLogTableName,
+        accessType: accessType,
+        conversationMode: conversationMode
+      }
+    });
     lambdaChatApi.grantInvoke(new iam.ServicePrincipal('apigateway.amazonaws.com'));  
     s3Bucket.grantRead(lambdaChatApi); // permission for s3
     callLogDataTable.grantReadWriteData(lambdaChatApi); // permission for dynamo
