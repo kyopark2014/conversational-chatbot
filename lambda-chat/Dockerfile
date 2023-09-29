@@ -14,6 +14,9 @@ RUN /var/lang/bin/python3 -m pip install boto3
 
 #RUN pip install -U /var/task/bedrock-sdk/boto3-1.28.55-py3-none-any.whl
 #RUN pip install -U /var/task/bedrock-sdk/botocore-1.31.55-py3-none-any.whl
+RUN /var/lang/bin/python3 -m pip install botocore --upgrade
+RUN /var/lang/bin/python3 -m pip install boto3 --upgrade
+
 RUN rm -rf /var/task/bedrock-sdk
 
 CMD ["lambda_function.lambda_handler"]
