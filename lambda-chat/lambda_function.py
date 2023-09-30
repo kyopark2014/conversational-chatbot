@@ -37,9 +37,6 @@ boto3_bedrock = boto3.client(
     region_name=bedrock_region,
 )
 
-#modelInfo = boto3_bedrock.list_foundation_models()    
-#print('models: ', modelInfo)
-
 HUMAN_PROMPT = "\n\nHuman:"
 AI_PROMPT = "\n\nAssistant:"
 def get_parameter(modelId):
@@ -55,7 +52,7 @@ def get_parameter(modelId):
             "max_tokens_to_sample":1024,
             "temperature":0.1,
             "top_k":250,
-            "top_p": 1,
+            "top_p": 0.9,
             "stop_sequences": [HUMAN_PROMPT]            
         }
 parameters = get_parameter(modelId)
@@ -329,6 +326,13 @@ def lambda_handler(event, context):
 
     msg = ""
     if type == 'text' and body[:11] == 'list models':
+        bedrock_client = boto3.client(
+            service_name='bedrock-runtime',
+            region_name=bedrock_region,
+        )
+        modelInfo = bedrock_client.list_foundation_models()    
+        print('models: ', modelInfo)
+
         msg = f"The list of models: \n"
         lists = modelInfo['modelSummaries']
         
